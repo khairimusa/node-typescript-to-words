@@ -4,18 +4,18 @@ import {
   LocaleInterface,
   NumberWordMap,
   ToWordsOptions,
-} from './types';
-import enUs from './locales/en-US';
+} from "./types";
+import enUs from "./locales/en-US";
+import enMY from "./locales/en-MY";
 
 export const DefaultConverterOptions: ConverterOptions = {
   currency: false,
   ignoreDecimal: false,
   ignoreZeroCurrency: false,
-  doNotAddOnly: false,
 };
 
 export const DefaultToWordsOptions: ToWordsOptions = {
-  localeCode: 'en-US',
+  localeCode: "en-US",
   converterOptions: DefaultConverterOptions,
 };
 
@@ -32,8 +32,10 @@ export class ToWords {
   public getLocaleClass(): ConstructorOf<LocaleInterface> {
     /* eslint-disable @typescript-eslint/no-var-requires */
     switch (this.options.localeCode) {
-      case 'en-US':
+      case "en-US":
         return enUs;
+      case "en-MY":
+        return enMY;
     }
     /* eslint-enable @typescript-eslint/no-var-requires */
     throw new Error(`Unknown Locale "${this.options.localeCode}"`);
@@ -64,7 +66,7 @@ export class ToWords {
     } else {
       words = this.convertNumber(number);
     }
-    return words.join(' ');
+    return words.join(" ");
   }
 
   protected convertNumber(number: number): string[] {
@@ -75,7 +77,7 @@ export class ToWords {
       number = Math.abs(number);
     }
 
-    const split = number.toString().split('.');
+    const split = number.toString().split(".");
     const ignoreZero =
       this.isNumberZero(number) && locale.config.ignoreZeroInDecimals;
     let words = this.convertInternal(Number(split[0]));
@@ -89,7 +91,7 @@ export class ToWords {
         wordsWithDecimal.push(locale.config.texts.point);
       }
       if (
-        split[1].startsWith('0') &&
+        split[1].startsWith("0") &&
         !locale.config?.decimalLengthWordMapping
       ) {
         const zeroWords = [];
@@ -129,10 +131,10 @@ export class ToWords {
 
     number = this.toFixed(number);
     // Extra check for isFloat to overcome 1.999 rounding off to 2
-    const split = number.toString().split('.');
+    const split = number.toString().split(".");
     let words = [...this.convertInternal(Number(split[0]))];
     // Determine if the main currency should be in singular form
-    // e.g. 1 Dollar Only instead of 1 Dollars Only
+    // e.g. 1 Dollar instead of 1 Dollars
 
     if (Number(split[0]) === 1 && currencyOptions.singular) {
       words.push(currencyOptions.name);
@@ -166,7 +168,7 @@ export class ToWords {
         wordsWithDecimal.push(decimalLengthWord);
       }
       // Determine if the fractional unit should be in singular form
-      // e.g. 1 Dollar and 1 Cent Only instead of 1 Dollar and 1 Cents Only
+      // e.g. 1 Dollar and 1 Cent instead of 1 Dollar and 1 Cents
       if (decimalPart === 1 && currencyOptions.fractionalUnit.singular) {
         wordsWithDecimal.push(currencyOptions.fractionalUnit.singular);
       } else {
@@ -179,20 +181,8 @@ export class ToWords {
     if (!isEmpty && isNegativeNumber) {
       words.unshift(locale.config.texts.minus);
     }
-    if (
-      !isEmpty &&
-      locale.config.texts.only &&
-      !options.doNotAddOnly &&
-      !locale.config.onlyInFront
-    ) {
-      wordsWithDecimal.push(locale.config.texts.only);
-    }
     if (wordsWithDecimal.length) {
       words.push(...wordsWithDecimal);
-    }
-
-    if (!isEmpty && !options.doNotAddOnly && locale.config.onlyInFront) {
-      words.splice(0, 0, locale.config.texts.only);
     }
 
     return words;

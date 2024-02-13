@@ -1,15 +1,15 @@
 import { cloneDeep } from "lodash";
 import { ToWords } from "../src/ToWords";
-import enUs from "../src/locales/en-US";
+import enMY from "../src/locales/en-MY";
 
-const localeCode = "en-US";
+const localeCode = "en-MY";
 const toWords = new ToWords({
   localeCode,
 });
 
 describe("Test Locale", () => {
   test(`Locale Class: ${localeCode}`, () => {
-    expect(toWords.getLocaleClass()).toBe(enUs);
+    expect(toWords.getLocaleClass()).toBe(enMY);
   });
 
   const wrongLocaleCode = localeCode + "-wrong";
@@ -88,7 +88,7 @@ describe("Test Negative Integers with options = {}", () => {
 describe("Test Integers with options = { currency: true }", () => {
   const testIntegersWithCurrency = cloneDeep(testIntegers);
   testIntegersWithCurrency.map((row) => {
-    row[1] = `${row[1]} Dollars`;
+    row[1] = `${row[1]} Ringgit`;
   });
 
   test.concurrent.each(testIntegersWithCurrency)(
@@ -105,11 +105,11 @@ describe("Test Negative Integers with options = { currency: true }", () => {
   const testNegativeIntegersWithCurrency = cloneDeep(testIntegers);
   testNegativeIntegersWithCurrency.map((row, i) => {
     if (i === 0) {
-      row[1] = `${row[1]} Dollars`;
+      row[1] = `${row[1]} Ringgit`;
       return;
     }
     row[0] = -row[0];
-    row[1] = `Minus ${row[1]} Dollars`;
+    row[1] = `Minus ${row[1]} Ringgit`;
   });
 
   test.concurrent.each(testNegativeIntegersWithCurrency)(
@@ -125,7 +125,7 @@ describe("Test Negative Integers with options = { currency: true }", () => {
 describe("Test Integers with options = { currency: true, ignoreZeroCurrency: true }", () => {
   const testIntegersWithCurrencyAndIgnoreZeroCurrency = cloneDeep(testIntegers);
   testIntegersWithCurrencyAndIgnoreZeroCurrency.map((row, i) => {
-    row[1] = i === 0 ? "" : `${row[1]} Dollars`;
+    row[1] = i === 0 ? "" : `${row[1]} Ringgit`;
   });
 
   test.concurrent.each(testIntegersWithCurrencyAndIgnoreZeroCurrency)(
@@ -162,17 +162,17 @@ describe("Test Floats with options = {}", () => {
 });
 
 const testFloatsWithCurrency: [number, string][] = [
-  [0.0, `Zero Dollars`],
-  [0.04, `Zero Dollars And Four Cents`],
-  [0.0468, `Zero Dollars And Five Cents`],
-  [0.4, `Zero Dollars And Forty Cents`],
-  [0.63, `Zero Dollars And Sixty Three Cents`],
-  [0.973, `Zero Dollars And Ninety Seven Cents`],
-  [0.999, `One Dollar`],
-  [37.06, `Thirty Seven Dollars And Six Cents`],
-  [37.068, `Thirty Seven Dollars And Seven Cents`],
-  [37.68, `Thirty Seven Dollars And Sixty Eight Cents`],
-  [37.683, `Thirty Seven Dollars And Sixty Eight Cents`],
+  [0.0, `Zero Ringgit`],
+  [0.04, `Zero Ringgit And Four Sen`],
+  [0.0468, `Zero Ringgit And Five Sen`],
+  [0.4, `Zero Ringgit And Forty Sen`],
+  [0.63, `Zero Ringgit And Sixty Three Sen`],
+  [0.973, `Zero Ringgit And Ninety Seven Sen`],
+  [0.999, `One Ringgit`],
+  [37.06, `Thirty Seven Ringgit And Six Sen`],
+  [37.068, `Thirty Seven Ringgit And Seven Sen`],
+  [37.68, `Thirty Seven Ringgit And Sixty Eight Sen`],
+  [37.683, `Thirty Seven Ringgit And Sixty Eight Sen`],
 ];
 
 describe("Test Floats with options = { currency: true }", () => {
@@ -197,7 +197,7 @@ describe("Test Floats with options = { currency: true, ignoreZeroCurrency: true 
       return;
     }
     if (row[0] > 0 && row[0] < 1) {
-      row[1] = (row[1] as string).replace(`Zero Dollars And `, "");
+      row[1] = (row[1] as string).replace(`Zero Ringgit And `, "");
     }
   });
 
@@ -220,9 +220,9 @@ describe("Test Floats with options = { currency: true, ignoreDecimal: true }", (
   );
   testFloatsWithCurrencyAndIgnoreDecimal.map((row) => {
     if (row[0] === 0.999) {
-      row[1] = `Zero Dollars`;
+      row[1] = `Zero Ringgit`;
     } else {
-      row[1] = (row[1] as string).replace(new RegExp(` And [\\w ]+ Cents`), "");
+      row[1] = (row[1] as string).replace(new RegExp(` And [\\w ]+ Sen`), "");
     }
   });
 
@@ -247,7 +247,7 @@ describe("Test Floats with options = { currency: true, ignoreZeroCurrency: true,
     if (row[0] > 0 && row[0] < 1) {
       row[1] = "";
     }
-    row[1] = (row[1] as string).replace(new RegExp(` And [\\w ]+ Cents`), "");
+    row[1] = (row[1] as string).replace(new RegExp(` And [\\w ]+ Sen`), "");
   });
 
   test.concurrent.each(
