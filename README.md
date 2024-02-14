@@ -33,3 +33,7 @@ npm test
 ## Setup
 
 - used .mjs extension to support ECMAscript module import/export for .js file
+
+## Playing
+
+![](./assets/recording.gif)
